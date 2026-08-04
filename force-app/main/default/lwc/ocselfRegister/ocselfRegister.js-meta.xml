@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>60.0</apiVersion>
+    <isExposed>true</isExposed>
+    <masterLabel>Self Register</masterLabel>
+    <description>Public sign-up page for OpenCore. Creates a real login, pulls the person's public GitHub profile, and creates their Contributor__c record.</description>
+    <targets>
+        <target>lightningCommunity__Default</target>
+        <target>lightningCommunity__Page</target>
+    </targets>
+</LightningComponentBundle>

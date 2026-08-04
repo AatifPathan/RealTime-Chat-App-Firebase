@@ -1,0 +1,75 @@
+<template>
+  <div class="oc-page">
+    <div class="oc-breadcrumb">
+      <span>OpenCore</span><span class="oc-crumb-sep">/</span><span class="oc-crumb-current">Issues</span>
+    </div>
+
+    <div class="oc-header">
+      <div class="oc-header-title">
+        <span class="oc-eyebrow">Contribute</span>
+        <h1 class="oc-title">Issue Board</h1>
+        <p class="oc-subtitle">Find an issue that matches your skills and start contributing today.</p>
+      </div>
+      <div class="oc-header-actions">
+        <div class="oc-search">
+          <span class="oc-search-icon">⌕</span>
+          <input type="text" placeholder="Search issues..." value={searchTerm} onchange={handleSearch} />
+        </div>
+      </div>
+    </div>
+
+    <div class="oc-chip-row">
+      <template for:each={filters} for:item="f">
+        <button key={f.value} class={f.chipClass} type="button" data-value={f.value} onclick={handleFilter}>{f.label}</button>
+      </template>
+    </div>
+
+    <template if:true={isLoading}>
+      <div class="oc-loading-wrap">
+        <lightning-spinner alternative-text="Loading issues" size="medium"></lightning-spinner>
+      </div>
+    </template>
+
+    <template if:true={hasError}>
+      <div class="oc-card oc-card-pad oc-error-banner">
+        <p class="oc-card-title">Couldn't load issues</p>
+        <p class="oc-card-desc">{errorMessage}</p>
+        <button class="oc-btn oc-btn-sm" type="button" onclick={loadIssues}>Retry</button>
+      </div>
+    </template>
+
+    <template if:true={showContent}>
+      <template if:true={isEmpty}>
+        <div class="oc-empty">
+          <div class="oc-empty-icon">◌</div>
+          <p>No issues match your filters.</p>
+        </div>
+      </template>
+
+      <template if:false={isEmpty}>
+        <div class="oc-issue-board">
+          <template for:each={issues} for:item="issue">
+            <div class="oc-card oc-card-pad oc-issue-card" key={issue.id}>
+              <div class="oc-issue-card-top">
+                <span class={issue.statusClass}>{issue.status}</span>
+                <span class={issue.diffClass}>{issue.difficulty}</span>
+              </div>
+              <p class="oc-card-title">{issue.title}</p>
+              <p class="oc-card-desc">{issue.summary}</p>
+              <div class="oc-issue-meta">
+                <span class="oc-stat-row"><span class="oc-stat-icon">⌘</span>{issue.repositoryName}</span>
+                <template if:true={issue.projectName}>
+                  <span class="oc-stat-row"><span class="oc-stat-icon">◧</span>{issue.projectName}</span>
+                </template>
+              </div>
+              <div class="oc-issue-footer">
+                <button class="oc-btn oc-btn-sm" type="button" data-id={issue.repositoryId} onclick={handleView}>View Repository</button>
+                <button class="oc-btn oc-btn-primary oc-btn-sm" type="button" data-id={issue.id} onclick={handleApply} disabled={isApplying}>Apply</button>
+              </div>
+            </div>
+          </template>
+        </div>
+      </template>
+    </template>
+  </div>
+</template>

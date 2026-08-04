@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>GitHub_URL_Requires_Username</fullName>
+    <active>true</active>
+    <description>A GitHub username is required when a GitHub profile URL is provided.</description>
+    <errorConditionFormula>AND(
+NOT(ISBLANK(GitHub_Profile_URL__c)),
+ISBLANK(GitHub_Username__c)
+)</errorConditionFormula>
+    <errorDisplayField>GitHub_Username__c</errorDisplayField>
+    <errorMessage>Please enter the GitHub Username when providing a GitHub Profile URL.</errorMessage>
+</ValidationRule>

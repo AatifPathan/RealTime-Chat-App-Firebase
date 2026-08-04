@@ -1,0 +1,84 @@
+<template>
+  <div class="oc-shell">
+    <!-- Sidebar -->
+    <aside class="oc-sidebar">
+      <div class="oc-brand">
+        <div class="oc-brand-mark">OC</div>
+        <span class="oc-brand-name">OpenCore</span>
+      </div>
+
+      <nav class="oc-nav">
+        <p class="oc-nav-heading">Workspace</p>
+        <template for:each={mainNavItems} for:item="item">
+          <div key={item.page} class={item.navClass} data-page={item.page} onclick={handleNavClick}>
+            <span class="oc-nav-icon">{item.icon}</span>
+            <span class="oc-nav-label">{item.label}</span>
+          </div>
+        </template>
+
+        <p class="oc-nav-heading oc-nav-heading-spaced">Community</p>
+        <template for:each={communityNavItems} for:item="item">
+          <div key={item.page} class={item.navClass} data-page={item.page} onclick={handleNavClick}>
+            <span class="oc-nav-icon">{item.icon}</span>
+            <span class="oc-nav-label">{item.label}</span>
+          </div>
+        </template>
+      </nav>
+
+      <div class="oc-sidebar-footer">
+        <template for:each={footerNavItems} for:item="item">
+          <div key={item.page} class={item.navClass} data-page={item.page} onclick={handleNavClick}>
+            <span class="oc-nav-icon">{item.icon}</span>
+            <span class="oc-nav-label">{item.label}</span>
+          </div>
+        </template>
+      </div>
+    </aside>
+
+    <!-- Right column: header + content -->
+    <div class="oc-main-col">
+      <header class="oc-appbar">
+        <div class="oc-appbar-left">
+          <p class="oc-appbar-title">{pageTitle}</p>
+        </div>
+        <div class="oc-appbar-right">
+          <template if:true={isGuestUser}>
+            <a class="oc-btn-auth" href="/opencore/signup">Sign Up</a>
+            <a class="oc-btn-auth oc-btn-auth-primary" href="/opencore/login">Log In</a>
+          </template>
+          <template if:false={isGuestUser}>
+            <button class="oc-icon-btn" type="button" title="Notifications" data-page="notifications" onclick={handleNavClick}>
+              🔔
+              <template if:true={hasUnreadNotifications}>
+                <span class="oc-appbar-dot"></span>
+              </template>
+            </button>
+            <div class="oc-appbar-avatar" title="Profile" data-page="profile" onclick={handleNavClick}>OC</div>
+          </template>
+        </div>
+      </header>
+
+      <main class="oc-content">
+        <template if:true={isDashboard}><c-dashboard></c-dashboard></template>
+        <template if:true={isOrganizations}><c-organizations></c-organizations></template>
+        <template if:true={isOrganizationDetail}><c-organization-detail record-id={currentRecordId}></c-organization-detail></template>
+        <template if:true={isRepositories}><c-repositories></c-repositories></template>
+        <template if:true={isRepositoryDetail}><c-repository-detail record-id={currentRecordId}></c-repository-detail></template>
+        <template if:true={isProjects}><c-projects></c-projects></template>
+        <template if:true={isProjectDetail}><c-project-detail record-id={currentRecordId}></c-project-detail></template>
+        <template if:true={isContributors}><c-contributors></c-contributors></template>
+        <template if:true={isContributorProfile}><c-contributor-profile record-id={currentRecordId}></c-contributor-profile></template>
+        <template if:true={isIssues}><c-issues></c-issues></template>
+        <template if:true={isIssueDetail}><c-issue-detail record-id={currentRecordId}></c-issue-detail></template>
+        <template if:true={isApplications}><c-applications></c-applications></template>
+        <template if:true={isApplicationReview}><c-application-review record-id={currentRecordId}></c-application-review></template>
+        <template if:true={isBadges}><c-badges></c-badges></template>
+        <template if:true={isSkills}><c-skills></c-skills></template>
+        <template if:true={isMentorDashboard}><c-mentor-dashboard></c-mentor-dashboard></template>
+        <template if:true={isProfile}><c-profile></c-profile></template>
+        <template if:true={isSettings}><c-settings></c-settings></template>
+        <template if:true={isNotifications}><c-notifications></c-notifications></template>
+      </main>
+    </div>
+  </div>
+</template>

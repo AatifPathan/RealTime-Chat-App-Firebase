@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Time_Spent_Must_Be_Positive</fullName>
+    <active>true</active>
+    <description>Time spent must be greater than zero.</description>
+    <errorConditionFormula>Time_Spent_Hours__c &lt;= 0</errorConditionFormula>
+    <errorDisplayField>Time_Spent_Hours__c</errorDisplayField>
+    <errorMessage>Time Spent must be greater than 0.</errorMessage>
+</ValidationRule>

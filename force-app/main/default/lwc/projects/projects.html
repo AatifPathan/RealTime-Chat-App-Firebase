@@ -1,0 +1,131 @@
+<template>
+  <div class="oc-page">
+    <div class="oc-breadcrumb">
+      <span>OpenCore</span><span class="oc-crumb-sep">/</span><span class="oc-crumb-current">Projects</span>
+    </div>
+
+    <div class="oc-header">
+      <div class="oc-header-title">
+        <span class="oc-eyebrow">Plan</span>
+        <h1 class="oc-title">Projects</h1>
+        <p class="oc-subtitle">Track initiatives spanning multiple repositories and organizations.</p>
+      </div>
+      <div class="oc-header-actions">
+        <div class="oc-search">
+          <span class="oc-search-icon">⌕</span>
+          <input type="text" placeholder="Search projects..." value={searchTerm} onchange={handleSearch} />
+        </div>
+        <button class="oc-btn oc-btn-primary" type="button" onclick={handleOpenCreate}>+ New Project</button>
+      </div>
+    </div>
+
+    <template if:true={showCreateModal}>
+      <div class="oc-modal-backdrop" onclick={handleCloseCreate}>
+        <div class="oc-modal-card" onclick={stopPropagation}>
+          <p class="oc-card-title">New Project</p>
+
+          <template if:true={createErrorMessage}>
+            <div class="oc-register-error">{createErrorMessage}</div>
+          </template>
+
+          <div class="oc-field">
+            <label>Name</label>
+            <input class="oc-input" type="text" value={createForm.name} onchange={handleCreateFieldChange} data-field="name" />
+          </div>
+
+          <div class="oc-field">
+            <label>Organization</label>
+            <select class="oc-input" onchange={handleCreateFieldChange} data-field="organizationId">
+              <option value="">Select an organization…</option>
+              <template for:each={organizationOptions} for:item="org">
+                <option key={org.id} value={org.id}>{org.name}</option>
+              </template>
+            </select>
+          </div>
+
+          <div class="oc-field">
+            <label>Status</label>
+            <select class="oc-input" onchange={handleCreateFieldChange} data-field="status">
+              <template for:each={statusOptions} for:item="st">
+                <option key={st} value={st}>{st}</option>
+              </template>
+            </select>
+          </div>
+
+          <div class="oc-field">
+            <label>Target End Date</label>
+            <input class="oc-input" type="date" onchange={handleCreateFieldChange} data-field="endDate" />
+          </div>
+
+          <div class="oc-field">
+            <label>Description</label>
+            <textarea class="oc-textarea" rows="2" onchange={handleCreateFieldChange} data-field="description"></textarea>
+          </div>
+
+          <div class="oc-modal-actions">
+            <button class="oc-btn" type="button" onclick={handleCloseCreate}>Cancel</button>
+            <button class="oc-btn oc-btn-primary" type="button" onclick={handleCreateSubmit} disabled={isCreating}>{createSubmitLabel}</button>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <div class="oc-chip-row">
+      <template for:each={filters} for:item="f">
+        <button key={f.value} class={f.chipClass} type="button" data-value={f.value} onclick={handleFilter}>{f.label}</button>
+      </template>
+    </div>
+
+    <template if:true={isLoading}>
+      <div class="oc-loading-wrap">
+        <lightning-spinner alternative-text="Loading projects" size="medium"></lightning-spinner>
+      </div>
+    </template>
+
+    <template if:true={hasError}>
+      <div class="oc-card oc-card-pad oc-error-banner">
+        <p class="oc-card-title">Couldn't load projects</p>
+        <p class="oc-card-desc">{errorMessage}</p>
+        <button class="oc-btn oc-btn-sm" type="button" onclick={loadProjects}>Retry</button>
+      </div>
+    </template>
+
+    <template if:true={showContent}>
+      <template if:true={isEmpty}>
+        <div class="oc-empty">
+          <div class="oc-empty-icon">◌</div>
+          <p>No projects match your search.</p>
+        </div>
+      </template>
+
+      <template if:false={isEmpty}>
+        <div class="oc-grid oc-grid-3">
+          <template for:each={projects} for:item="p">
+            <div class="oc-card oc-card-pad oc-card-hover oc-proj-card" key={p.id} data-id={p.id} onclick={handleCardClick}>
+              <div class="oc-proj-head">
+                <p class="oc-card-title">{p.name}</p>
+                <span class={p.statusClass}>{p.status}</span>
+              </div>
+              <p class="oc-list-row-sub">{p.organizationName}</p>
+              <div class="oc-tech-row">
+                <template for:each={p.stack} for:item="tech">
+                  <span class="oc-tech-tag" key={tech}>{tech}</span>
+                </template>
+              </div>
+              <div class="oc-proj-footer">
+                <span class={p.diffClass}>{p.difficulty}</span>
+              </div>
+              <div class="oc-progress-row">
+                <span>Progress</span>
+                <span>{p.progress}%</span>
+              </div>
+              <div class="oc-progress">
+                <div class="oc-progress-bar" style={p.style}></div>
+              </div>
+            </div>
+          </template>
+        </div>
+      </template>
+    </template>
+  </div>
+</template>

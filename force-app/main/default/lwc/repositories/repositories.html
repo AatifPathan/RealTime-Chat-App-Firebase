@@ -1,0 +1,166 @@
+<template>
+  <div class="oc-page">
+    <div class="oc-breadcrumb">
+      <span>OpenCore</span><span class="oc-crumb-sep">/</span><span class="oc-crumb-current">Repositories</span>
+    </div>
+
+    <div class="oc-header">
+      <div class="oc-header-title">
+        <span class="oc-eyebrow">Explore</span>
+        <h1 class="oc-title">Repositories</h1>
+        <p class="oc-subtitle">Browse {totalCount} open-source repositories across every organization on OpenCore.</p>
+      </div>
+      <div class="oc-header-actions">
+        <div class="oc-search">
+          <span class="oc-search-icon">⌕</span>
+          <input type="text" placeholder="Search repositories..." value={searchTerm} onchange={handleSearch} />
+        </div>
+        <button class="oc-btn oc-btn-primary" type="button" onclick={handleOpenCreate}>+ Add Repository</button>
+      </div>
+    </div>
+
+    <template if:true={showCreateModal}>
+      <div class="oc-modal-backdrop" onclick={handleCloseCreate}>
+        <div class="oc-modal-card" onclick={stopPropagation}>
+          <p class="oc-card-title">Add Repository</p>
+
+          <template if:true={createErrorMessage}>
+            <div class="oc-register-error">{createErrorMessage}</div>
+          </template>
+
+          <div class="oc-field">
+            <label>Name</label>
+            <input class="oc-input" type="text" value={createForm.name} onchange={handleCreateFieldChange} data-field="name" />
+          </div>
+
+          <div class="oc-field">
+            <label>Organization</label>
+            <select class="oc-input" onchange={handleCreateFieldChange} data-field="organizationId">
+              <option value="">Select an organization…</option>
+              <template for:each={organizationOptions} for:item="org">
+                <option key={org.id} value={org.id}>{org.name}</option>
+              </template>
+            </select>
+          </div>
+
+          <div class="oc-field">
+            <label>Primary Language</label>
+            <select class="oc-input" onchange={handleCreateFieldChange} data-field="primaryLanguage">
+              <option value="">Select…</option>
+              <template for:each={languageOptions} for:item="lang">
+                <option key={lang} value={lang}>{lang}</option>
+              </template>
+            </select>
+          </div>
+
+          <div class="oc-field">
+            <label>Difficulty</label>
+            <select class="oc-input" onchange={handleCreateFieldChange} data-field="difficultyLevel">
+              <option value="">Select…</option>
+              <template for:each={difficultyOptions} for:item="diff">
+                <option key={diff} value={diff}>{diff}</option>
+              </template>
+            </select>
+          </div>
+
+          <div class="oc-field">
+            <label>Status</label>
+            <select class="oc-input" onchange={handleCreateFieldChange} data-field="status">
+              <template for:each={statusOptions} for:item="st">
+                <option key={st} value={st}>{st}</option>
+              </template>
+            </select>
+          </div>
+
+          <div class="oc-field">
+            <label>GitHub URL</label>
+            <input class="oc-input" type="text" value={createForm.githubUrl} onchange={handleCreateFieldChange} data-field="githubUrl" />
+          </div>
+
+          <div class="oc-field">
+            <label>Description</label>
+            <textarea class="oc-textarea" rows="2" onchange={handleCreateFieldChange} data-field="description"></textarea>
+          </div>
+
+          <div class="oc-modal-actions">
+            <button class="oc-btn" type="button" onclick={handleCloseCreate}>Cancel</button>
+            <button class="oc-btn oc-btn-primary" type="button" onclick={handleCreateSubmit} disabled={isCreating}>{createSubmitLabel}</button>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <div class="oc-chip-row">
+      <template for:each={filters} for:item="f">
+        <button key={f.value} class={f.chipClass} type="button" data-value={f.value} onclick={handleFilter}>{f.label}</button>
+      </template>
+    </div>
+
+    <template if:true={isLoading}>
+      <div class="oc-loading-wrap">
+        <lightning-spinner alternative-text="Loading repositories" size="medium"></lightning-spinner>
+      </div>
+    </template>
+
+    <template if:true={hasError}>
+      <div class="oc-card oc-card-pad oc-error-banner">
+        <p class="oc-card-title">Couldn't load repositories</p>
+        <p class="oc-card-desc">{errorMessage}</p>
+        <button class="oc-btn oc-btn-sm" type="button" onclick={loadRepositories}>Retry</button>
+      </div>
+    </template>
+
+    <template if:true={showContent}>
+      <div class="oc-table-wrap">
+        <table class="oc-table">
+          <thead>
+            <tr>
+              <th class="oc-sortable" onclick={handleSort} data-field="name">Repository Name</th>
+              <th>Language</th>
+              <th class="oc-sortable" onclick={handleSort} data-field="stars">Stars</th>
+              <th class="oc-sortable" onclick={handleSort} data-field="forks">Forks</th>
+              <th class="oc-sortable" onclick={handleSort} data-field="issues">Issues</th>
+              <th>Difficulty</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <template for:each={repos} for:item="repo">
+              <tr key={repo.id} data-id={repo.id} onclick={handleRowClick}>
+                <td>
+                  <div class="oc-repo-cell">
+                    <div class="oc-logo-tile oc-logo-tile-sm">{repo.initials}</div>
+                    <div>
+                      <p class="oc-cell-primary">{repo.name}</p>
+                      <p class="oc-cell-sub">{repo.organizationName}</p>
+                    </div>
+                  </div>
+                </td>
+                <td><span class="oc-lang"><i class="oc-lang-dot" style={repo.langColor}></i>{repo.language}</span></td>
+                <td>★ {repo.stars}</td>
+                <td>⑂ {repo.forks}</td>
+                <td>{repo.openIssuesCount}</td>
+                <td><span class={repo.diffClass}>{repo.difficulty}</span></td>
+                <td><span class={repo.statusClass}>{repo.status}</span></td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+        <template if:true={isEmpty}>
+          <div class="oc-empty">
+            <div class="oc-empty-icon">◌</div>
+            <p>No repositories match your search.</p>
+          </div>
+        </template>
+      </div>
+
+      <template if:true={hasPagination}>
+        <div class="oc-pagination">
+          <button class="oc-btn oc-btn-sm" type="button" disabled={isFirstPage} onclick={handlePrevPage}>← Previous</button>
+          <span class="oc-pagination-label">Page {pageNumber} of {totalPages}</span>
+          <button class="oc-btn oc-btn-sm" type="button" disabled={isLastPage} onclick={handleNextPage}>Next →</button>
+        </div>
+      </template>
+    </template>
+  </div>
+</template>

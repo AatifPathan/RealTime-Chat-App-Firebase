@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Public_Repository_Requires_GitHub_URL</fullName>
+    <active>true</active>
+    <description>Public repositories must have a GitHub URL.</description>
+    <errorConditionFormula>AND(
+ISPICKVAL(Visibility__c, &quot;Public&quot;),
+ISBLANK(Github_URL__c)
+)</errorConditionFormula>
+    <errorDisplayField>Github_URL__c</errorDisplayField>
+    <errorMessage>Public repositories must have a GitHub URL.</errorMessage>
+</ValidationRule>

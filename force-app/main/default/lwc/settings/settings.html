@@ -1,0 +1,111 @@
+<template>
+  <div class="oc-page">
+    <div class="oc-breadcrumb">
+      <span>OpenCore</span><span class="oc-crumb-sep">/</span><span class="oc-crumb-current">Settings</span>
+    </div>
+
+    <div class="oc-header">
+      <div class="oc-header-title">
+        <span class="oc-eyebrow">Account</span>
+        <h1 class="oc-title">Settings</h1>
+        <p class="oc-subtitle">Manage your profile, notifications, appearance, and security.</p>
+      </div>
+      <div class="oc-header-actions">
+        <button class="oc-btn oc-btn-primary" type="button" onclick={handleSave} disabled={isSaving}>Save Changes</button>
+      </div>
+    </div>
+
+    <template if:true={isLoading}>
+      <div class="oc-loading-wrap">
+        <lightning-spinner alternative-text="Loading settings" size="medium"></lightning-spinner>
+      </div>
+    </template>
+
+    <template if:true={hasError}>
+      <div class="oc-card oc-card-pad oc-error-banner">
+        <p class="oc-card-title">Couldn't load your settings</p>
+        <p class="oc-card-desc">{errorMessage}</p>
+        <button class="oc-btn oc-btn-sm" type="button" onclick={handleRetry}>Retry</button>
+      </div>
+    </template>
+
+    <template if:true={showContent}>
+      <template if:true={showSavedBanner}>
+        <div class="oc-card oc-card-pad oc-saved-banner oc-section">Your settings have been saved.</div>
+      </template>
+
+      <div class="oc-tabs">
+        <template for:each={tabs} for:item="t">
+          <span key={t.value} class={t.tabClass} data-value={t.value} onclick={handleTab}>{t.label}</span>
+        </template>
+      </div>
+
+      <template if:true={showProfile}>
+        <div class="oc-card oc-card-pad oc-settings-card">
+          <div class="oc-grid oc-grid-2">
+            <div class="oc-field">
+              <label>Full Name</label>
+              <input class="oc-input" type="text" value={settings.name} disabled />
+            </div>
+            <div class="oc-field">
+              <label>Email</label>
+              <input class="oc-input" type="email" value={settings.email} onchange={handleFieldChange} data-field="email" />
+            </div>
+            <div class="oc-field">
+              <label>LinkedIn Profile</label>
+              <input class="oc-input" type="text" value={settings.linkedinProfile} onchange={handleFieldChange} data-field="linkedinProfile" />
+            </div>
+            <div class="oc-field">
+              <label>GitHub Username</label>
+              <input class="oc-input" type="text" value={settings.githubUsername} onchange={handleFieldChange} data-field="githubUsername" />
+            </div>
+          </div>
+          <div class="oc-field oc-full-field">
+            <label>Bio</label>
+            <textarea class="oc-textarea" rows="3" onchange={handleFieldChange} data-field="bio">{settings.bio}</textarea>
+          </div>
+        </div>
+      </template>
+
+      <template if:true={showNotifications}>
+        <p class="oc-local-only-note">These preferences aren't stored in Salesforce yet — no notification-preference fields exist on Contributor__c. They'll reset on next login.</p>
+        <div class="oc-card oc-card-pad oc-settings-card">
+          <template for:each={notificationPrefs} for:item="p">
+            <div class="oc-toggle-row" key={p.field}>
+              <div>
+                <p class="oc-list-row-title">{p.label}</p>
+                <p class="oc-list-row-sub">{p.description}</p>
+              </div>
+              <label class="oc-switch">
+                <input type="checkbox" checked={p.enabled} data-field={p.field} onchange={handleToggle} />
+                <span class="oc-switch-slider"></span>
+              </label>
+            </div>
+          </template>
+        </div>
+      </template>
+
+      <template if:true={showTheme}>
+        <p class="oc-local-only-note">Theme isn't stored in Salesforce yet — no theme-preference field exists on Contributor__c. It'll reset on next login.</p>
+        <div class="oc-card oc-card-pad oc-settings-card">
+          <p class="oc-card-title">Appearance</p>
+          <div class="oc-theme-grid">
+            <template for:each={themes} for:item="th">
+              <div class={th.cardClass} key={th.value} data-value={th.value} onclick={handleTheme}>
+                <div class={th.swatchClass}></div>
+                <p>{th.label}</p>
+              </div>
+            </template>
+          </div>
+        </div>
+      </template>
+
+      <template if:true={showPassword}>
+        <div class="oc-card oc-card-pad oc-settings-card">
+          <p class="oc-card-desc">Password changes are managed through your Salesforce login settings, not stored on the Contributor record.</p>
+          <a class="oc-btn oc-btn-sm" href="/secur/changepassword.jsp">Change Salesforce Password ↗</a>
+        </div>
+      </template>
+    </template>
+  </div>
+</template>

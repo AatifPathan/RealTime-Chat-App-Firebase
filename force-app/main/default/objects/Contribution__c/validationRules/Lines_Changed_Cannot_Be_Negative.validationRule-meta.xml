@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Lines_Changed_Cannot_Be_Negative</fullName>
+    <active>true</active>
+    <description>Prevents negative values for lines changed.</description>
+    <errorConditionFormula>Lines_Changed__c &lt; 0</errorConditionFormula>
+    <errorDisplayField>Lines_Changed__c</errorDisplayField>
+    <errorMessage>Lines Changed cannot be less than 0.</errorMessage>
+</ValidationRule>

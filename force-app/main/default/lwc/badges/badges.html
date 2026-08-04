@@ -1,0 +1,71 @@
+<template>
+  <div class="oc-page">
+    <div class="oc-breadcrumb">
+      <span>OpenCore</span><span class="oc-crumb-sep">/</span><span class="oc-crumb-current">Badges</span>
+    </div>
+
+    <div class="oc-header">
+      <div class="oc-header-title">
+        <span class="oc-eyebrow">Recognition</span>
+        <h1 class="oc-title">Badges</h1>
+        <p class="oc-subtitle">You've unlocked {unlockedCount} of {totalCount} badges. Keep contributing to earn more.</p>
+      </div>
+    </div>
+
+    <template if:true={isLoading}>
+      <div class="oc-loading-wrap">
+        <lightning-spinner alternative-text="Loading badges" size="medium"></lightning-spinner>
+      </div>
+    </template>
+
+    <template if:true={hasError}>
+      <div class="oc-card oc-card-pad oc-error-banner">
+        <p class="oc-card-title">Couldn't load badges</p>
+        <p class="oc-card-desc">{errorMessage}</p>
+        <button class="oc-btn oc-btn-sm" type="button" onclick={loadBadges}>Retry</button>
+      </div>
+    </template>
+
+    <template if:true={showContent}>
+      <template if:true={isEmpty}>
+        <div class="oc-empty">
+          <div class="oc-empty-icon">◌</div>
+          <p>No badges have been configured yet.</p>
+        </div>
+      </template>
+
+      <template if:false={isEmpty}>
+        <div class="oc-card oc-card-pad oc-section">
+          <div class="oc-progress-row">
+            <span>Overall badge progress</span>
+            <span>{overallPercent}%</span>
+          </div>
+          <div class="oc-progress">
+            <div class="oc-progress-bar" style={overallStyle}></div>
+          </div>
+        </div>
+
+        <div class="oc-grid oc-grid-4">
+          <template for:each={badges} for:item="b">
+            <div class={b.cardClass} key={b.id}>
+              <div class="oc-badge-tile-icon">{b.icon}</div>
+              <p class="oc-card-title oc-center-text">{b.name}</p>
+              <p class="oc-card-desc oc-center-text">{b.description}</p>
+              <template if:true={b.unlocked}>
+                <span class="oc-badge oc-badge-green oc-center-badge">Unlocked</span>
+              </template>
+              <template if:false={b.unlocked}>
+                <div class="oc-progress-row oc-badge-progress-row">
+                  <span>{b.progress}%</span>
+                </div>
+                <div class="oc-progress">
+                  <div class="oc-progress-bar" style={b.style}></div>
+                </div>
+              </template>
+            </div>
+          </template>
+        </div>
+      </template>
+    </template>
+  </div>
+</template>

@@ -1,0 +1,135 @@
+<template>
+  <div class="oc-page">
+    <template if:true={isLoading}>
+      <div class="oc-loading-wrap">
+        <lightning-spinner alternative-text="Loading repository" size="medium"></lightning-spinner>
+      </div>
+    </template>
+
+    <template if:true={hasError}>
+      <div class="oc-card oc-card-pad oc-error-banner">
+        <p class="oc-card-title">Couldn't load this repository</p>
+        <p class="oc-card-desc">{errorMessage}</p>
+        <button class="oc-btn oc-btn-sm" type="button" onclick={handleRetry}>Retry</button>
+      </div>
+    </template>
+
+    <template if:true={showContent}>
+      <div class="oc-breadcrumb">
+        <span>OpenCore</span><span class="oc-crumb-sep">/</span>
+        <span onclick={goToRepositories} class="oc-link">Repositories</span><span class="oc-crumb-sep">/</span>
+        <span class="oc-crumb-current">{repo.name}</span>
+      </div>
+
+      <div class="oc-header">
+        <div class="oc-header-title">
+          <div class="oc-repo-title-row">
+            <div class="oc-logo-tile">{repo.initials}</div>
+            <div>
+              <h1 class="oc-title">{repo.name}</h1>
+              <p class="oc-subtitle">{repo.organizationName} &middot; <span class={repo.diffClass}>{repo.difficulty}</span></p>
+            </div>
+          </div>
+        </div>
+        <div class="oc-header-actions">
+          <template if:true={githubUrl}>
+            <a class="oc-btn" href={githubUrl} target="_blank" rel="noopener">View GitHub ↗</a>
+          </template>
+          <button class="oc-btn" type="button" onclick={handleSync} disabled={isSyncing}>{syncLabel}</button>
+          <button class="oc-btn" type="button" onclick={handleBookmark} disabled={isMutating}>{bookmarkLabel}</button>
+          <button class="oc-btn oc-btn-primary" type="button" onclick={handleApply} disabled={isMutating}>Apply</button>
+        </div>
+      </div>
+
+      <p class="oc-card-desc oc-repo-desc">{description}</p>
+
+      <div class="oc-grid oc-grid-4 oc-section">
+        <div class="oc-kpi-card"><div class="oc-kpi-value">{repo.stars}</div><div class="oc-kpi-label">Stars</div></div>
+        <div class="oc-kpi-card"><div class="oc-kpi-value">{repo.forks}</div><div class="oc-kpi-label">Forks</div></div>
+        <div class="oc-kpi-card"><div class="oc-kpi-value">{contributors.length}</div><div class="oc-kpi-label">Contributors</div></div>
+        <div class="oc-kpi-card"><div class="oc-kpi-value">{repo.openIssuesCount}</div><div class="oc-kpi-label">Open Issues</div></div>
+      </div>
+
+      <div class="oc-tabs">
+        <template for:each={tabs} for:item="t">
+          <span key={t.value} class={t.tabClass} data-value={t.value} onclick={handleTab}>{t.label}</span>
+        </template>
+      </div>
+
+      <template if:true={showReadme}>
+        <div class="oc-card oc-card-pad oc-section">
+          <p class="oc-card-title">README.md</p>
+          <template if:true={readme}>
+            <div class="oc-readme">
+              <p class="oc-readme-text">{readme}</p>
+            </div>
+          </template>
+          <template if:false={readme}>
+            <div class="oc-empty oc-empty-inline"><p>No README has been added for this repository yet.</p></div>
+          </template>
+        </div>
+      </template>
+
+      <template if:true={showIssues}>
+        <div class="oc-section">
+          <div class="oc-section-head">
+            <p class="oc-section-title">Open Issues</p>
+          </div>
+          <template if:true={hasOpenIssues}>
+            <template for:each={openIssues} for:item="issue">
+              <div class="oc-card oc-card-pad oc-card-hover oc-issue-row" key={issue.id} data-id={issue.id} onclick={handleIssueClick}>
+                <div>
+                  <p class="oc-list-row-title">{issue.title}</p>
+                  <p class="oc-list-row-sub">{issue.issueNumber}</p>
+                </div>
+                <span class={issue.diffClass}>{issue.difficulty}</span>
+              </div>
+            </template>
+          </template>
+          <template if:false={hasOpenIssues}>
+            <div class="oc-empty"><p>No open issues on this repository right now.</p></div>
+          </template>
+        </div>
+      </template>
+
+      <template if:true={showContributors}>
+        <template if:true={hasContributors}>
+          <div class="oc-grid oc-grid-4 oc-section">
+            <template for:each={contributors} for:item="c">
+              <div class="oc-card oc-card-pad oc-contrib-card" key={c.id}>
+                <div class="oc-avatar oc-avatar-md">{c.initials}</div>
+                <p class="oc-list-row-title">{c.name}</p>
+                <p class="oc-list-row-sub">{c.contributionCount} issues resolved</p>
+              </div>
+            </template>
+          </div>
+        </template>
+        <template if:false={hasContributors}>
+          <div class="oc-empty"><p>No contributors recorded yet.</p></div>
+        </template>
+      </template>
+
+      <div class="oc-section">
+        <div class="oc-section-head">
+          <p class="oc-section-title">Recent Activity</p>
+        </div>
+        <template if:true={hasActivity}>
+          <div class="oc-card oc-card-pad">
+            <div class="oc-timeline">
+              <template for:each={activity} for:item="a">
+                <div class="oc-timeline-item" key={a.id}>
+                  <span class="oc-timeline-dot"></span>
+                  <div class="oc-timeline-text">{a.text}</div>
+                  <div class="oc-timeline-meta">{a.meta}</div>
+                </div>
+              </template>
+            </div>
+          </div>
+        </template>
+        <template if:false={hasActivity}>
+          <div class="oc-empty"><p>No recent activity.</p></div>
+        </template>
+      </div>
+    </template>
+  </div>
+</template>

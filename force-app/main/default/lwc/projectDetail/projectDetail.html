@@ -1,0 +1,129 @@
+<template>
+  <div class="oc-page">
+    <template if:true={isLoading}>
+      <div class="oc-loading-wrap">
+        <lightning-spinner alternative-text="Loading project" size="medium"></lightning-spinner>
+      </div>
+    </template>
+
+    <template if:true={hasError}>
+      <div class="oc-card oc-card-pad oc-error-banner">
+        <p class="oc-card-title">Couldn't load this project</p>
+        <p class="oc-card-desc">{errorMessage}</p>
+        <button class="oc-btn oc-btn-sm" type="button" onclick={handleRetry}>Retry</button>
+      </div>
+    </template>
+
+    <template if:true={showContent}>
+      <div class="oc-breadcrumb">
+        <span>OpenCore</span><span class="oc-crumb-sep">/</span>
+        <span class="oc-link" onclick={goToProjects}>Projects</span><span class="oc-crumb-sep">/</span>
+        <span class="oc-crumb-current">{project.name}</span>
+      </div>
+
+      <div class="oc-header">
+        <div class="oc-header-title">
+          <span class="oc-eyebrow">{project.organizationName}</span>
+          <h1 class="oc-title">{project.name}</h1>
+          <p class="oc-subtitle">{description}</p>
+        </div>
+        <div class="oc-header-actions">
+          <span class={project.statusClass}>{project.status}</span>
+          <button class="oc-btn oc-btn-primary" type="button" onclick={handleApply}>Apply to Contribute</button>
+        </div>
+      </div>
+
+      <div class="oc-card oc-card-pad oc-section">
+        <div class="oc-progress-row">
+          <span>Overall progress</span>
+          <span>{project.progress}%</span>
+        </div>
+        <div class="oc-progress">
+          <div class="oc-progress-bar" style={project.style}></div>
+        </div>
+      </div>
+
+      <div class="oc-grid oc-grid-2 oc-section">
+        <div>
+          <div class="oc-section-head">
+            <p class="oc-section-title">Repositories</p>
+          </div>
+          <template if:true={hasRepos}>
+            <template for:each={repos} for:item="r">
+              <div class="oc-card oc-card-pad oc-card-hover oc-list-margin" key={r.id} data-id={r.id} onclick={goToRepositoryDetail}>
+                <p class="oc-list-row-title">{r.name}</p>
+                <p class="oc-list-row-sub">{r.language} &middot; ★ {r.stars}</p>
+              </div>
+            </template>
+          </template>
+          <template if:false={hasRepos}>
+            <div class="oc-empty"><p>No repository linked yet.</p></div>
+          </template>
+        </div>
+
+        <div>
+          <div class="oc-section-head">
+            <p class="oc-section-title">Open Issues</p>
+          </div>
+          <template if:true={hasIssues}>
+            <template for:each={issues} for:item="i">
+              <div class="oc-card oc-card-pad oc-issue-row oc-list-margin" key={i.id}>
+                <p class="oc-list-row-title">{i.title}</p>
+                <span class={i.diffClass}>{i.difficulty}</span>
+              </div>
+            </template>
+          </template>
+          <template if:false={hasIssues}>
+            <div class="oc-empty"><p>No open issues on this project.</p></div>
+          </template>
+        </div>
+      </div>
+
+      <div class="oc-grid oc-grid-2">
+        <div>
+          <div class="oc-section-head">
+            <p class="oc-section-title">Maintainers</p>
+          </div>
+          <template if:true={hasMaintainers}>
+            <div class="oc-card oc-card-pad">
+              <template for:each={maintainers} for:item="m">
+                <div class="oc-list-row" key={m.id}>
+                  <div class="oc-avatar oc-avatar-sm">{m.initials}</div>
+                  <div class="oc-list-row-body">
+                    <p class="oc-list-row-title">{m.name}</p>
+                    <p class="oc-list-row-sub">{m.role}</p>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </template>
+          <template if:false={hasMaintainers}>
+            <div class="oc-empty"><p>No maintainers assigned yet.</p></div>
+          </template>
+        </div>
+
+        <div>
+          <div class="oc-section-head">
+            <p class="oc-section-title">Timeline</p>
+          </div>
+          <template if:true={hasTimeline}>
+            <div class="oc-card oc-card-pad">
+              <div class="oc-timeline">
+                <template for:each={timeline} for:item="t">
+                  <div class="oc-timeline-item" key={t.id}>
+                    <span class="oc-timeline-dot"></span>
+                    <div class="oc-timeline-text">{t.text}</div>
+                    <div class="oc-timeline-meta">{t.meta}</div>
+                  </div>
+                </template>
+              </div>
+            </div>
+          </template>
+          <template if:false={hasTimeline}>
+            <div class="oc-empty"><p>No activity recorded yet.</p></div>
+          </template>
+        </div>
+      </div>
+    </template>
+  </div>
+</template>

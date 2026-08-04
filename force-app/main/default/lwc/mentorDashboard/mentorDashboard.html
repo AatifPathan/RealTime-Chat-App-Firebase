@@ -1,0 +1,130 @@
+<template>
+  <div class="oc-page">
+    <div class="oc-breadcrumb">
+      <span>OpenCore</span><span class="oc-crumb-sep">/</span><span class="oc-crumb-current">Mentor Dashboard</span>
+    </div>
+
+    <div class="oc-header">
+      <div class="oc-header-title">
+        <span class="oc-eyebrow">Mentor</span>
+        <h1 class="oc-title">Mentor Dashboard</h1>
+        <p class="oc-subtitle">Guide contributors, review applications, and keep projects on track.</p>
+      </div>
+      <div class="oc-header-actions">
+        <button class="oc-btn" type="button" onclick={goToApplications}>Review Applications</button>
+      </div>
+    </div>
+
+    <template if:true={isLoading}>
+      <div class="oc-loading-wrap">
+        <lightning-spinner alternative-text="Loading mentor dashboard" size="medium"></lightning-spinner>
+      </div>
+    </template>
+
+    <template if:true={hasError}>
+      <div class="oc-card oc-card-pad oc-error-banner">
+        <p class="oc-card-title">Couldn't load your mentor dashboard</p>
+        <p class="oc-card-desc">{errorMessage}</p>
+        <button class="oc-btn oc-btn-sm" type="button" onclick={handleRetry}>Retry</button>
+      </div>
+    </template>
+
+    <template if:true={showContent}>
+      <div class="oc-grid oc-grid-4 oc-section">
+        <div class="oc-kpi-card"><div class="oc-kpi-value">{stats.pendingApplications}</div><div class="oc-kpi-label">Pending Applications</div></div>
+        <div class="oc-kpi-card"><div class="oc-kpi-value">{stats.activeProjects}</div><div class="oc-kpi-label">Active Projects</div></div>
+        <div class="oc-kpi-card"><div class="oc-kpi-value">{stats.repositoriesMentored}</div><div class="oc-kpi-label">Repositories Mentored</div></div>
+        <div class="oc-kpi-card"><div class="oc-kpi-value">{stats.reviewsThisMonth}</div><div class="oc-kpi-label">Reviews This Month</div></div>
+      </div>
+
+      <div class="oc-grid oc-grid-2 oc-section">
+        <div>
+          <div class="oc-section-head">
+            <p class="oc-section-title">Pending Applications</p>
+            <a class="oc-link" onclick={goToApplications}>View all</a>
+          </div>
+          <template if:true={hasPendingApplications}>
+            <template for:each={pendingApplications} for:item="app">
+              <div class="oc-card oc-card-pad oc-app-row oc-list-margin" key={app.id} data-id={app.id} onclick={handleReviewClick}>
+                <div class="oc-avatar oc-avatar-sm">{app.initials}</div>
+                <div class="oc-list-row-body">
+                  <p class="oc-list-row-title">{app.applicantName}</p>
+                  <p class="oc-list-row-sub">{app.issueTitle}</p>
+                </div>
+                <button class="oc-btn oc-btn-sm" type="button" data-id={app.id} onclick={handleReviewClick}>Review</button>
+              </div>
+            </template>
+          </template>
+          <template if:false={hasPendingApplications}>
+            <div class="oc-empty"><p>No pending applications right now.</p></div>
+          </template>
+        </div>
+
+        <div>
+          <div class="oc-section-head">
+            <p class="oc-section-title">Projects</p>
+          </div>
+          <template if:true={hasProjects}>
+            <template for:each={projects} for:item="p">
+              <div class="oc-card oc-card-pad oc-list-margin" key={p.id}>
+                <p class="oc-list-row-title">{p.name}</p>
+                <div class="oc-progress">
+                  <div class="oc-progress-bar" style={p.style}></div>
+                </div>
+              </div>
+            </template>
+          </template>
+          <template if:false={hasProjects}>
+            <div class="oc-empty"><p>You aren't mentoring any projects yet.</p></div>
+          </template>
+        </div>
+      </div>
+
+      <div class="oc-grid oc-grid-2">
+        <div>
+          <div class="oc-section-head">
+            <p class="oc-section-title">Repositories</p>
+          </div>
+          <template if:true={hasRepositories}>
+            <div class="oc-card oc-card-pad">
+              <template for:each={repositories} for:item="r">
+                <div class="oc-list-row" key={r.id}>
+                  <div class="oc-logo-tile oc-logo-tile-sm">{r.initials}</div>
+                  <div class="oc-list-row-body">
+                    <p class="oc-list-row-title">{r.name}</p>
+                    <p class="oc-list-row-sub">{r.openIssuesCount} open issues</p>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </template>
+          <template if:false={hasRepositories}>
+            <div class="oc-empty"><p>No repositories linked yet.</p></div>
+          </template>
+        </div>
+
+        <div>
+          <div class="oc-section-head">
+            <p class="oc-section-title">Recent Reviews</p>
+          </div>
+          <template if:true={hasRecentReviews}>
+            <div class="oc-card oc-card-pad">
+              <div class="oc-timeline">
+                <template for:each={recentReviews} for:item="r">
+                  <div class="oc-timeline-item" key={r.id}>
+                    <span class="oc-timeline-dot"></span>
+                    <div class="oc-timeline-text">{r.text}</div>
+                    <div class="oc-timeline-meta">{r.meta}</div>
+                  </div>
+                </template>
+              </div>
+            </div>
+          </template>
+          <template if:false={hasRecentReviews}>
+            <div class="oc-empty"><p>No reviews recorded yet.</p></div>
+          </template>
+        </div>
+      </div>
+    </template>
+  </div>
+</template>

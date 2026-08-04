@@ -1,0 +1,60 @@
+<template>
+  <div class="oc-register-page">
+    <div class="oc-register-card">
+      <div class="oc-register-brand">
+        <div class="oc-brand-mark">OC</div>
+        <span class="oc-brand-name">OpenCore</span>
+      </div>
+
+      <template if:false={showSuccess}>
+        <h1 class="oc-register-title">Create your account</h1>
+        <p class="oc-register-subtitle">Join OpenCore and start contributing to open-source projects.</p>
+
+        <template if:true={errorMessage}>
+          <div class="oc-register-error">{errorMessage}</div>
+        </template>
+
+        <div class="oc-field">
+          <label>Full Name</label>
+          <input class="oc-input" type="text" value={fullName} onchange={handleFieldChange} data-field="fullName" />
+        </div>
+
+        <div class="oc-field">
+          <label>Email</label>
+          <input class="oc-input" type="email" value={email} onchange={handleFieldChange} data-field="email" />
+        </div>
+
+        <div class="oc-field">
+          <label>Password</label>
+          <input class="oc-input" type="password" value={password} onchange={handleFieldChange} data-field="password" />
+        </div>
+
+        <div class="oc-field">
+          <label>Confirm Password</label>
+          <input class="oc-input" type="password" value={confirmPassword} onchange={handleFieldChange} data-field="confirmPassword" />
+        </div>
+
+        <div class="oc-field">
+          <label>GitHub Username</label>
+          <input class="oc-input" type="text" placeholder="e.g. octocat" value={githubUsername} onchange={handleFieldChange} data-field="githubUsername" />
+          <p class="oc-field-hint">We'll pull your name, bio, and avatar from GitHub automatically.</p>
+        </div>
+
+        <button class="oc-btn oc-btn-primary oc-register-submit" type="button" onclick={handleSubmit} disabled={isSubmitting}>
+          {submitLabel}
+        </button>
+
+        <p class="oc-register-login-link">Already have an account? <a href="/login">Log in</a></p>
+      </template>
+
+      <template if:true={showSuccess}>
+        <div class="oc-register-success">
+          <div class="oc-register-success-icon">✓</div>
+          <h1 class="oc-register-title">You're all set!</h1>
+          <p class="oc-register-subtitle">Your account has been created. Log in to start contributing.</p>
+          <a class="oc-btn oc-btn-primary oc-register-submit" href="/login">Go to Login</a>
+        </div>
+      </template>
+    </div>
+  </div>
+</template>

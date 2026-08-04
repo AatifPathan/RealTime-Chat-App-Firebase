@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Good_First_Issue_Cannot_Be_Advanced</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+Good_First_Issue__c,
+ISPICKVAL(Difficulty__c,&quot;Advanced&quot;)
+)</errorConditionFormula>
+    <errorDisplayField>Difficulty__c</errorDisplayField>
+    <errorMessage>Good First Issues cannot have Advanced difficulty.</errorMessage>
+</ValidationRule>

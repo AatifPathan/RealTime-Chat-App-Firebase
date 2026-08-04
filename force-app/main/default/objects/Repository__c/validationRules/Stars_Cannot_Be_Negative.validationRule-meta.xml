@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Stars_Cannot_Be_Negative</fullName>
+    <active>true</active>
+    <description>Prevents negative values for repository stars.</description>
+    <errorConditionFormula>Stars__c &lt; 0</errorConditionFormula>
+    <errorDisplayField>Stars__c</errorDisplayField>
+    <errorMessage>Stars cannot be less than 0.</errorMessage>
+</ValidationRule>

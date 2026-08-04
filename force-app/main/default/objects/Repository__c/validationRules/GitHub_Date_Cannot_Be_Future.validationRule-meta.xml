@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>GitHub_Date_Cannot_Be_Future</fullName>
+    <active>true</active>
+    <errorConditionFormula>Created_On_GitHub__c &gt; TODAY()</errorConditionFormula>
+    <errorDisplayField>Created_On_GitHub__c</errorDisplayField>
+    <errorMessage>Created On GitHub cannot be a future date.</errorMessage>
+</ValidationRule>

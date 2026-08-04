@@ -1,0 +1,67 @@
+<template>
+  <div class="oc-page">
+    <div class="oc-breadcrumb">
+      <span>OpenCore</span><span class="oc-crumb-sep">/</span><span class="oc-crumb-current">Notifications</span>
+    </div>
+
+    <div class="oc-header">
+      <div class="oc-header-title">
+        <span class="oc-eyebrow">Inbox</span>
+        <h1 class="oc-title">Notifications</h1>
+        <p class="oc-subtitle">{unreadCount} unread notifications</p>
+      </div>
+      <div class="oc-header-actions">
+        <button class="oc-btn" type="button" onclick={handleMarkAllRead} disabled={isMutating}>Mark all as read</button>
+      </div>
+    </div>
+
+    <div class="oc-chip-row">
+      <template for:each={filters} for:item="f">
+        <button key={f.value} class={f.chipClass} type="button" data-value={f.value} onclick={handleFilter}>{f.label}</button>
+      </template>
+    </div>
+
+    <template if:true={isLoading}>
+      <div class="oc-loading-wrap">
+        <lightning-spinner alternative-text="Loading notifications" size="medium"></lightning-spinner>
+      </div>
+    </template>
+
+    <template if:true={hasError}>
+      <div class="oc-card oc-card-pad oc-error-banner">
+        <p class="oc-card-title">Couldn't load notifications</p>
+        <p class="oc-card-desc">{errorMessage}</p>
+        <button class="oc-btn oc-btn-sm" type="button" onclick={handleRetry}>Retry</button>
+      </div>
+    </template>
+
+    <template if:true={showContent}>
+      <template if:true={isEmpty}>
+        <div class="oc-empty">
+          <div class="oc-empty-icon">◌</div>
+          <p>You're all caught up — no notifications here.</p>
+        </div>
+      </template>
+
+      <template if:false={isEmpty}>
+        <div class="oc-notif-list">
+          <template for:each={filteredNotifications} for:item="n">
+            <div class={n.rowClass} key={n.id} data-id={n.id} onclick={handleRead}>
+              <div class={n.iconWrapClass}>{n.icon}</div>
+              <div class="oc-notif-body">
+                <p class="oc-list-row-title">{n.title}</p>
+                <p class="oc-list-row-sub">{n.description}</p>
+              </div>
+              <div class="oc-notif-meta">
+                <span class="oc-notif-time">{n.meta}</span>
+                <template if:true={n.unread}>
+                  <span class="oc-unread-dot"></span>
+                </template>
+              </div>
+            </div>
+          </template>
+        </div>
+      </template>
+    </template>
+  </div>
+</template>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Review_Date_After_Applied_Date</fullName>
+    <active>true</active>
+    <description>The review date must be on or after the application date.</description>
+    <errorConditionFormula>AND(
+NOT(ISBLANK(Reviewed_On__c)),
+Reviewed_On__c &lt; Applied_On__c
+)</errorConditionFormula>
+    <errorDisplayField>Reviewed_On__c</errorDisplayField>
+    <errorMessage>Reviewed On cannot be earlier than Applied On.</errorMessage>
+</ValidationRule>

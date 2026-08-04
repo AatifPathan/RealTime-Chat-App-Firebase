@@ -1,0 +1,66 @@
+<template>
+  <div class="oc-page">
+    <div class="oc-breadcrumb">
+      <span>OpenCore</span><span class="oc-crumb-sep">/</span><span class="oc-crumb-current">Contributors</span>
+    </div>
+
+    <div class="oc-header">
+      <div class="oc-header-title">
+        <span class="oc-eyebrow">Community</span>
+        <h1 class="oc-title">Contributors</h1>
+        <p class="oc-subtitle">{totalCount} people actively building on OpenCore.</p>
+      </div>
+      <div class="oc-header-actions">
+        <div class="oc-search">
+          <span class="oc-search-icon">⌕</span>
+          <input type="text" placeholder="Search contributors..." value={searchTerm} onchange={handleSearch} />
+        </div>
+      </div>
+    </div>
+
+    <template if:true={isLoading}>
+      <div class="oc-loading-wrap">
+        <lightning-spinner alternative-text="Loading contributors" size="medium"></lightning-spinner>
+      </div>
+    </template>
+
+    <template if:true={hasError}>
+      <div class="oc-card oc-card-pad oc-error-banner">
+        <p class="oc-card-title">Couldn't load contributors</p>
+        <p class="oc-card-desc">{errorMessage}</p>
+        <button class="oc-btn oc-btn-sm" type="button" onclick={loadContributors}>Retry</button>
+      </div>
+    </template>
+
+    <template if:true={showContent}>
+      <template if:true={isEmpty}>
+        <div class="oc-empty">
+          <div class="oc-empty-icon">◌</div>
+          <p>No contributors match "{searchTerm}"</p>
+        </div>
+      </template>
+
+      <template if:false={isEmpty}>
+        <div class="oc-grid oc-grid-4">
+          <template for:each={contributors} for:item="c">
+            <div class="oc-card oc-card-pad oc-card-hover oc-contrib-card" key={c.id} data-id={c.id} onclick={handleCardClick}>
+              <div class="oc-avatar oc-avatar-lg">{c.initials}</div>
+              <p class="oc-card-title">{c.name}</p>
+              <p class="oc-list-row-sub">{c.role}</p>
+              <div class="oc-tech-row oc-center">
+                <template for:each={c.skills} for:item="skill">
+                  <span class="oc-tech-tag" key={skill}>{skill}</span>
+                </template>
+              </div>
+              <div class="oc-contrib-footer">
+                <span class="oc-stat-row"><span class="oc-stat-icon">⌘</span>{c.repoCount} repos</span>
+                <span class="oc-stat-row"><span class="oc-stat-icon">◆</span>{c.badgeCount} badges</span>
+              </div>
+              <div class="oc-rep-pill">Reputation: {c.reputation}</div>
+            </div>
+          </template>
+        </div>
+      </template>
+    </template>
+  </div>
+</template>
